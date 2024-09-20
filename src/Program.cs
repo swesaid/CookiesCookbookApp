@@ -2,7 +2,8 @@
 { 
     public static void Main(string[] args)
     {
-        IUserInteraction userInteraction = new ConsoleUserInteraction();
+        IIngredientsRegister ingredientsRegister = new IngredientsRegister();
+        IUserInteraction userInteraction = new ConsoleUserInteraction(ingredientsRegister);
         CookiesCookbookApp App = new CookiesCookbookApp(userInteraction);
         App.Run();
     }

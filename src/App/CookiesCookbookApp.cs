@@ -8,35 +8,29 @@ public class CookiesCookbookApp
     }
     public void Run()
     {
-        List<Ingredient> ingredients = new List<Ingredient>()
-        {
-            new WheatFlour(),
-            new CoconutFlour(),
-            new Butter(),
-            new Chocolate(),
-            new Sugar(),
-            new Cardamom(),
-            new Cinnamon(),
-            new CocoaPowder()
-        };
-        _userInteraction.ShowAvailableIngredients(ingredients);
+        _userInteraction.ShowAvailableIngredients();
     }
 }
 public interface IUserInteraction
 {
     public void ShowMessage(string message);
-    public void ShowAvailableIngredients(List<Ingredient> availableIngredients);
+    public void ShowAvailableIngredients();
 }
 public class ConsoleUserInteraction : IUserInteraction
 {
+    private readonly IIngredientsRegister _ingredientsRegister;
+    public ConsoleUserInteraction(IIngredientsRegister ingredientsRegister)
+    {
+        _ingredientsRegister = ingredientsRegister;
+    }
     public void ShowMessage(string message)
     {
         Console.WriteLine(message);
     }
-    public void ShowAvailableIngredients(List<Ingredient> availableIngredients)
+    public void ShowAvailableIngredients()
     {
         ShowMessage("Create a new cookie recipe! Available ingredients are: \n");
-        foreach (var ingredient in availableIngredients)
+        foreach (var ingredient in _ingredientsRegister.AvailableIngredients)
         {
             ShowMessage(ingredient.ToString());
         }
