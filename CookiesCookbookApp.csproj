@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Folder Include="data\" />
-    <Folder Include="src\App\" />
     <Folder Include="src\DataAccess\" />
     <Folder Include="src\FileAccess\" />
     <Folder Include="src\Helpers\" />
