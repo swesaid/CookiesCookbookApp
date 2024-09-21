@@ -4,7 +4,11 @@
     {
         IIngredientsRegister ingredientsRegister = new IngredientsRegister();
         IUserInteraction userInteraction = new ConsoleUserInteraction(ingredientsRegister);
-        CookiesCookbookApp App = new CookiesCookbookApp(userInteraction);
+        IRecipesRepository recipesRepository = new RecipesFileRepository();
+        IRecipeConverter recipeConverter = new RecipeConverter(ingredientsRegister);
+        IRecipePrinter recipePrinter = new RecipePrinter(userInteraction);
+
+        CookiesCookbookApp App = new CookiesCookbookApp(userInteraction, recipesRepository, recipeConverter, recipePrinter);
         App.Run();
     }
 

@@ -2,12 +2,27 @@
 public class CookiesCookbookApp
 {
     private readonly IUserInteraction _userInteraction;
-    public CookiesCookbookApp(IUserInteraction userInteraction)
+    private readonly IRecipesRepository _recipesRepository;
+    private readonly IRecipeConverter _recipeConverter;
+    private readonly IRecipePrinter _recipePrinter;
+    public CookiesCookbookApp(IUserInteraction userInteraction, IRecipesRepository recipesRepository, IRecipeConverter recipeConverter, IRecipePrinter recipePrinter)
     {
         _userInteraction = userInteraction;
+        _recipesRepository = recipesRepository;
+        _recipeConverter = recipeConverter;
+        _recipePrinter = recipePrinter;
     }
     public void Run()
     {
+        string fileName = _userInteraction.ReadFileNameFromUser("Enter the name of your cookie book: ");
+        string fileContent = _recipesRepository.ReadFromTxt(fileName);
+        
+        if (fileContent is not null)
+        {
+            List<Recipe> recipes = _recipeConverter.ToListOfRecipes(fileContent);
+            _recipePrinter.ShowExistingRecipes(recipes);
+        }
+
         _userInteraction.ShowAvailableIngredients();
 
         List<Ingredient> chosenIngredients = _userInteraction.ReadIngredientsFromUser();
@@ -29,8 +44,9 @@ public interface IUserInteraction
 {
     public void ShowMessage(string message);
     public void ShowAvailableIngredients();
-
     public List<Ingredient> ReadIngredientsFromUser();
+    string ReadFileNameFromUser(string message);
+    void ShowMessageWithoutNewLine(string message);
 }
 public class ConsoleUserInteraction : IUserInteraction
 {
@@ -42,10 +58,10 @@ public class ConsoleUserInteraction : IUserInteraction
     public void ShowMessage(string message)
     {
         Console.WriteLine(message);
-    }
+    }   
     public void ShowAvailableIngredients()
     {
-        ShowMessage("Create a new cookie recipe! Available ingredients are: \n");
+        ShowMessage("\nCreate a new cookie recipe! Available ingredients are: \n");
         foreach (var ingredient in _ingredientsRegister.AvailableIngredients)
         {
             ShowMessage(ingredient.ToString());
@@ -75,5 +91,35 @@ public class ConsoleUserInteraction : IUserInteraction
         } while (true);
         
         return chosenIngredients;
+    }
+
+    public void ShowMessageWithoutNewLine(string message)
+    {
+        Console.Write(message);
+    }
+
+    public string ReadFileNameFromUser(string message)
+    {
+        ShowMessageWithoutNewLine(message);
+        string fileName = Console.ReadLine();
+        return fileName;
+    }
+}
+
+public interface IRecipesRepository
+{
+    public string ReadFromTxt(string fileName);
+}
+
+public class RecipesFileRepository : IRecipesRepository
+{
+    public string ReadFromTxt(string filename)
+    {
+        string content = File.ReadAllText(filename);
+        string[] tmp = content.Split(',', StringSplitOptions.None);
+        content = string.Join("", tmp);
+
+        return content;
+
     }
 }
