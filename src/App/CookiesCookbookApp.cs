@@ -15,7 +15,7 @@ public class CookiesCookbookApp
     public void Run()
     {
         string fileName = _userInteraction.ReadFileNameFromUser("Enter the name of your cookie book: ");
-        string fileContent = _recipesRepository.ReadFromTxt(fileName);
+        string fileContent = _recipesRepository.ReadFromJson(fileName);
         
         if (fileContent is not null)
         {
@@ -109,6 +109,7 @@ public class ConsoleUserInteraction : IUserInteraction
 public interface IRecipesRepository
 {
     public string ReadFromTxt(string fileName);
+    public string ReadFromJson(string filename);
 }
 
 public class RecipesFileRepository : IRecipesRepository
@@ -120,6 +121,17 @@ public class RecipesFileRepository : IRecipesRepository
         content = string.Join("", tmp);
 
         return content;
-
     }
+
+    public string ReadFromJson(string filename)
+    {
+        string[] recipes = JsonSerializer.Deserialize<string[]>(File.ReadAllText(filename));
+        string recipesAsString = "";
+        for (int i = 0; i < recipes.Length; i++)
+        {
+            recipesAsString += string.Join("", recipes[i].Split(',', StringSplitOptions.None)) + Environment.NewLine;
+        }
+        return recipesAsString;
+    }   
+
 }
