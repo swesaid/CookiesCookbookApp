@@ -1,4 +1,5 @@
 ﻿namespace CookiesCookbook.App;
+
 public class CookiesCookbookApp
 {
     private readonly IUserInteraction _userInteraction;
@@ -23,15 +24,17 @@ public class CookiesCookbookApp
             _recipePrinter.ShowExistingRecipes(recipes);
         }
 
+        string idsOfIngredients = "";
         _userInteraction.ShowAvailableIngredients();
 
-        List<Ingredient> chosenIngredients = _userInteraction.ReadIngredientsFromUser();
+        List<Ingredient> chosenIngredients = _userInteraction.ReadIngredientsFromUser(ref idsOfIngredients);
 
         if (chosenIngredients.Count > 0)
         {
             _userInteraction.ShowMessage("Recipe added: \n");
             Recipe recipes = new Recipe(chosenIngredients);
             _userInteraction.ShowMessage(recipes.ToString());
+            _recipesRepository.WriteToTxt(idsOfIngredients, fileName);
         }
         else
             _userInteraction.ShowMessage("No ingredients have been selected. Recipe will not be saved.");
@@ -44,7 +47,7 @@ public interface IUserInteraction
 {
     public void ShowMessage(string message);
     public void ShowAvailableIngredients();
-    public List<Ingredient> ReadIngredientsFromUser();
+    public List<Ingredient> ReadIngredientsFromUser(ref string idsOfIngredients);
     string ReadFileNameFromUser(string message);
     void ShowMessageWithoutNewLine(string message);
 }
@@ -68,7 +71,7 @@ public class ConsoleUserInteraction : IUserInteraction
         }
     }
 
-    public List<Ingredient> ReadIngredientsFromUser()
+    public List<Ingredient> ReadIngredientsFromUser(ref string idsOfIngredients)
     {
         List<Ingredient> chosenIngredients = new List<Ingredient>();
         int id = 0;
@@ -86,7 +89,10 @@ public class ConsoleUserInteraction : IUserInteraction
                 continue;
             }
             else
+            {
+                idsOfIngredients += id; //at the end of the code pass it to the write to file function as a string and use it.
                 chosenIngredients.Add(_ingredientsRegister.GetById(id));
+            }
         
         } while (true);
         
@@ -111,6 +117,7 @@ public interface IRecipesRepository
     public string Read(string fileName);
     public string ReadFromTxt(string fileName);
     public string ReadFromJson(string filename);
+    void WriteToTxt(string idsOfIngredients, string fileName);
 }
 
 public class RecipesFileRepository : IRecipesRepository
@@ -141,6 +148,17 @@ public class RecipesFileRepository : IRecipesRepository
             recipesAsString += string.Join("", recipes[i].Split(',', StringSplitOptions.None)) + Environment.NewLine;
         }
         return recipesAsString;
-    }   
+    }
+
+    public void WriteToTxt(string idsOfIngredients, string fileName)
+    {
+        //from "135" -> to ["1", "3", "5"] then to -> "1, 3, 5"
+        using (StreamWriter file = new StreamWriter(fileName, append: true))
+        {
+            char[] integers = idsOfIngredients.ToCharArray();
+            idsOfIngredients = string.Join(",", integers);
+            file.WriteLine(idsOfIngredients);
+        }
+    }
 
 }
