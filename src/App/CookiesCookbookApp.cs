@@ -34,7 +34,7 @@ public class CookiesCookbookApp
             _userInteraction.ShowMessage("Recipe added: \n");
             Recipe recipes = new Recipe(chosenIngredients);
             _userInteraction.ShowMessage(recipes.ToString());
-            _recipesRepository.WriteToTxt(idsOfIngredients, fileName);
+            _recipesRepository.WriteToJson(idsOfIngredients, fileContent, fileName);
         }
         else
             _userInteraction.ShowMessage("No ingredients have been selected. Recipe will not be saved.");
@@ -118,6 +118,7 @@ public interface IRecipesRepository
     public string ReadFromTxt(string fileName);
     public string ReadFromJson(string filename);
     void WriteToTxt(string idsOfIngredients, string fileName);
+    void WriteToJson(string idsOfIngredients, string fileContent, string fileName);
 }
 
 public class RecipesFileRepository : IRecipesRepository
@@ -159,6 +160,19 @@ public class RecipesFileRepository : IRecipesRepository
             idsOfIngredients = string.Join(",", integers);
             file.WriteLine(idsOfIngredients);
         }
+    }
+
+    public void WriteToJson(string IdsOfIngredients, string fileContent, string fileName)
+    {
+        fileContent += IdsOfIngredients + Environment.NewLine;
+        string[] recipes = fileContent.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+        for (int i = 0; i < recipes.Length; i++)
+        {
+            char[] tmp = recipes[i].ToCharArray();
+            recipes[i] = string.Join(",", tmp);
+        }
+        string jsonContent = JsonSerializer.Serialize(recipes);
+        File.WriteAllText(fileName, jsonContent);
     }
 
 }
