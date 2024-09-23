@@ -6,6 +6,7 @@ public class CookiesCookbookApp
     private readonly IRecipesRepository _recipesRepository;
     private readonly IRecipeConverter _recipeConverter;
     private readonly IRecipePrinter _recipePrinter;
+
     public CookiesCookbookApp(IUserInteraction userInteraction, IRecipesRepository recipesRepository, IRecipeConverter recipeConverter, IRecipePrinter recipePrinter)
     {
         _userInteraction = userInteraction;
@@ -13,6 +14,7 @@ public class CookiesCookbookApp
         _recipeConverter = recipeConverter;
         _recipePrinter = recipePrinter;
     }
+
     public void Run()
     {
         string fileName = _userInteraction.ReadFileNameFromUser("Enter the name of your cookie book: ");
@@ -22,6 +24,11 @@ public class CookiesCookbookApp
         {
             List<Recipe> recipes = _recipeConverter.ToListOfRecipes(fileContent);
             _recipePrinter.ShowExistingRecipes(recipes);
+        }
+        else
+        {
+            _userInteraction.ShowMessage("File either does not exist or is empty.\n");
+            fileName = _userInteraction.PromptToCreateNewFile("Enter the name of the cookie book that you want to create: ");
         }
 
         string idsOfIngredients = "";
@@ -50,18 +57,23 @@ public interface IUserInteraction
     public List<Ingredient> ReadIngredientsFromUser(ref string idsOfIngredients);
     string ReadFileNameFromUser(string message);
     void ShowMessageWithoutNewLine(string message);
+    string PromptToCreateNewFile(string message);
 }
+
 public class ConsoleUserInteraction : IUserInteraction
 {
     private readonly IIngredientsRegister _ingredientsRegister;
+
     public ConsoleUserInteraction(IIngredientsRegister ingredientsRegister)
     {
         _ingredientsRegister = ingredientsRegister;
     }
+
     public void ShowMessage(string message)
     {
         Console.WriteLine(message);
     }   
+
     public void ShowAvailableIngredients()
     {
         ShowMessage("\nCreate a new cookie recipe! Available ingredients are: \n");
@@ -110,6 +122,21 @@ public class ConsoleUserInteraction : IUserInteraction
         string fileName = Console.ReadLine();
         return fileName;
     }
+
+    public string PromptToCreateNewFile(string message)
+    {
+        while (true)
+        {
+            string fileName = ReadFileNameFromUser(message);
+            if (File.Exists(fileName))
+            {
+                ShowMessage("Such file exists please, enter another name.\n");
+                continue;
+            }
+            ShowMessage("File sucessfully created!");
+            return fileName;
+        }
+    }
 }
 
 public interface IRecipesRepository
@@ -120,6 +147,8 @@ public interface IRecipesRepository
     public void Write(string idsOfIngredients, string fileContent, string fileName);
     void WriteToTxt(string idsOfIngredients, string fileName);
     void WriteToJson(string idsOfIngredients, string fileContent, string fileName);
+
+
 }
 
 public class RecipesFileRepository : IRecipesRepository
@@ -132,6 +161,7 @@ public class RecipesFileRepository : IRecipesRepository
             : ReadFromJson(filename);
         return null;
     }
+
     public string ReadFromTxt(string filename)
     {
         string content = File.ReadAllText(filename);
