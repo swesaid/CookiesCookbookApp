@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <Folder Include="data\" />
-    <Folder Include="src\Helpers\" />
     <Folder Include="tests\" />
   </ItemGroup>
 

@@ -3,10 +3,12 @@
 public class ConsoleUserInteraction : IUserInteraction
 {
     private readonly IIngredientsRegister _ingredientsRegister;
+    private readonly IPathBuilder _pathBuilder;
 
-    public ConsoleUserInteraction(IIngredientsRegister ingredientsRegister)
+    public ConsoleUserInteraction(IIngredientsRegister ingredientsRegister, IPathBuilder pathBuilder)
     {
         _ingredientsRegister = ingredientsRegister;
+        _pathBuilder = pathBuilder;
     }
 
     public void ShowMessage(string message)
@@ -63,6 +65,7 @@ public class ConsoleUserInteraction : IUserInteraction
         string fileName = Console.ReadLine();
         FileFormat format = ReadFileFormatFromUser();
         fileName += format == FileFormat.Json ? ".json" : ".txt";
+        fileName = _pathBuilder.BuildFilePath(fileName);
 
         return fileName;
     }
