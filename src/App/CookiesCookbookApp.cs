@@ -58,6 +58,7 @@ public interface IUserInteraction
     string ReadFileNameFromUser(string message);
     void ShowMessageWithoutNewLine(string message);
     string PromptToCreateNewFile(string message);
+    public FileFormat ReadFileFormatFromUser();
 }
 
 public class ConsoleUserInteraction : IUserInteraction
@@ -119,7 +120,11 @@ public class ConsoleUserInteraction : IUserInteraction
     public string ReadFileNameFromUser(string message)
     {
         ShowMessageWithoutNewLine(message);
+
         string fileName = Console.ReadLine();
+        FileFormat format = ReadFileFormatFromUser();
+        fileName += (format == FileFormat.Json) ? ".json" : ".txt";
+
         return fileName;
     }
 
@@ -136,6 +141,29 @@ public class ConsoleUserInteraction : IUserInteraction
             ShowMessage("File sucessfully created!");
             return fileName;
         }
+    }
+
+    public FileFormat ReadFileFormatFromUser()
+    {
+        do
+        {
+            ShowMessage("Choose file format: \n\n1.JSON\n2.Txt");
+            if (!int.TryParse(Console.ReadLine(), out int number))
+            {
+                ShowMessage("Invalid input\n");
+                continue;
+            }
+            switch (number)
+            {
+                case 1:
+                    return FileFormat.Json;
+                case 2:
+                    return FileFormat.Txt;
+                default:
+                    ShowMessage("Invalid choice");
+                    break;
+            }
+        } while (true);
     }
 }
 

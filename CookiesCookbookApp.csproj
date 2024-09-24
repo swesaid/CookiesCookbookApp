@@ -10,7 +10,6 @@
   <ItemGroup>
     <Folder Include="data\" />
     <Folder Include="src\DataAccess\" />
-    <Folder Include="src\FileAccess\" />
     <Folder Include="src\Helpers\" />
     <Folder Include="tests\" />
   </ItemGroup>
