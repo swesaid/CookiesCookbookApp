@@ -54,11 +54,10 @@ public class RecipesFileRepository : IRecipesRepository
     {
         fileContent += IdsOfIngredients + Environment.NewLine;
         string[] recipes = fileContent.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
-        for (int i = 0; i < recipes.Length; i++)
-        {
-            char[] tmp = recipes[i].ToCharArray();
-            recipes[i] = string.Join(",", tmp);
-        }
+       
+        recipes = recipes.Select(recipe => string.Join(",", recipe.ToCharArray()))
+                         .ToArray();
+
         string jsonContent = JsonSerializer.Serialize(recipes);
         File.WriteAllText(fileName, jsonContent);
     }
