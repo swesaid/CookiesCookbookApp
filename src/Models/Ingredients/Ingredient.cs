@@ -1,4 +1,5 @@
 ﻿namespace CookiesCookbook.Models.Ingredients;
+
 public abstract class Ingredient
 {
     public abstract int ID { get; }

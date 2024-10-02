@@ -3,6 +3,7 @@
 public class RecipeConverter : IRecipeConverter
 {
     private readonly IIngredientsRegister _ingredientsRegister;
+    
     public RecipeConverter(IIngredientsRegister ingredientsRegister)
     {
         _ingredientsRegister = ingredientsRegister;
@@ -14,7 +15,7 @@ public class RecipeConverter : IRecipeConverter
         
         return recipesAsStrings.Select(recipe =>
         {
-            var ingredients = recipe.Select(recipeId => _ingredientsRegister.GetById(int.Parse(recipeId.ToString())))
+            var ingredients = recipe.Select(ingredientId => _ingredientsRegister.GetById(int.Parse(ingredientId.ToString())))
                                     .ToList();
 
             return new Recipe(ingredients);

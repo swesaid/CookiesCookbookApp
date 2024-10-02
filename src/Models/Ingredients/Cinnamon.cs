@@ -1,4 +1,5 @@
 ﻿namespace CookiesCookbook.Models.Ingredients;
+
 public class Cinnamon : Spices
 {
     public override int ID => 7;

@@ -1,4 +1,5 @@
 ﻿namespace CookiesCookbook.Models.Ingredients;
+
 public class CocoaPowder : Ingredient
 {
     public override int ID => 8;

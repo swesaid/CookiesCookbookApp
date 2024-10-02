@@ -8,6 +8,4 @@ public interface IRecipesRepository
     public void Write(string idsOfIngredients, string fileContent, string fileName);
     void WriteToTxt(string idsOfIngredients, string fileName);
     void WriteToJson(string idsOfIngredients, string fileContent, string fileName);
-
-
 }

@@ -13,6 +13,7 @@ public class IngredientsRegister : IIngredientsRegister
         new Cinnamon(),
         new CocoaPowder()
     };
+
     public IReadOnlyList<Ingredient> AvailableIngredients => _ingredients.AsReadOnly();
 
     public Ingredient GetById(int id)
