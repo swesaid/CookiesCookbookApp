@@ -1,4 +1,5 @@
 ﻿namespace CookiesCookbook.Models.Ingredients;
+
 public class IngredientsRegister : IIngredientsRegister
 {
     private List<Ingredient> _ingredients = new List<Ingredient>()
@@ -15,12 +16,7 @@ public class IngredientsRegister : IIngredientsRegister
     public IReadOnlyList<Ingredient> AvailableIngredients => _ingredients.AsReadOnly();
 
     public Ingredient GetById(int id)
-    {
-        foreach (var ingredient in AvailableIngredients)
-        {
-            if (id == ingredient.ID)
-                return ingredient;
-        }
-        return null;
+    { 
+        return AvailableIngredients.FirstOrDefault(ingredient => id == ingredient.ID);
     }
 }
